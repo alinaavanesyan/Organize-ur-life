@@ -11,8 +11,43 @@
 </head>
 <body>
 <main>
+    <h1>Organize ur life</h1>
     <div class="quotes" align="center"> <i> {{ line1 }} </i> </div>
     <div class="quotes" align="right"> {{ line }} </div>
+    <div>У Вас есть задачи на сегодня?
+        <form action="{{ url_for('add') }}" method="POST">
+            <input type="text" name="todoitem" class="field" placeholder="Что угодно...">
+            <input type="submit" value="добавить" class="button">
+        </form>
+
+    </div>
+
+    <div>
+        <div class="div1">
+        <h2>Невыполненные задачи</h2>
+
+            {% for todo in incomplete %}
+            <li style="list-style-type: none;">
+                <form action="{{ url_for('complete', id=todo.id) }}">
+                    <button class="check"></button>{{ todo.text }}
+                </form>
+            </li>
+            {% endfor %}
+        </div>
+
+        <div class="div2">
+        <h2>Выполненные задачи</h2>
+
+            {% for todo in complete %}
+            <li style="list-style-type: none;">
+                <form action="{{ url_for('incomplete', id=todo.id) }}">
+                   <button class="check1"></button>{{ todo.text }}
+                </form>
+            </li>
+            {% endfor %}
+        </div>
+
+    </div>
 </main>
 </body>
 </html>
