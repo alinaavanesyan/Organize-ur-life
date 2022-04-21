@@ -1,11 +1,21 @@
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 import random
+import flask_wtf
+from flask_wtf import Form
+from wtforms import StringField, BooleanField
+from wtforms.validators import DataRequired
+
 
 app = Flask(__name__) #создаём объект на основе класса Flask, передаём название основного файла (app.py)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///phrases.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+class Todo(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    text = db.Column(db.String(200), nullable=False)
+    complete = db.Column(db.Boolean)
 
 
 class Quotes(db.Model):
@@ -16,9 +26,11 @@ class Quotes(db.Model):
     def __repr__(self):
         return '<Quotes %r>' % self.id
 
-@app.route('/exit')
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    incomplete = Todo.query.filter_by(complete=False).all()
+    complete = Todo.query.filter_by(complete=True).all()
     with open('templates/quotes.txt', encoding="UTF-8") as f:
         if request.method == 'GET':
             n = random.randint(0, 11)
@@ -28,8 +40,34 @@ def index():
                 if k == n:
                     line1 = line
                 elif k == n + 1:
-                    return render_template('index.html', line1=line1, line=line)
+                    return render_template('index.html', incomplete=incomplete, complete=complete, line1=line1, line=line)
                 k += 1
+
+
+@app.route('/add', methods=['POST'])
+def add():
+    todo = Todo(text=request.form['todoitem'], complete=False)
+    db.session.add(todo)
+    db.session.commit()
+    return redirect(url_for('index'))
+
+
+@app.route('/complete/<id>')
+def complete(id):
+    todo = Todo.query.filter_by(id=int(id)).first()
+    todo.complete = True
+    db.session.commit()
+    ###### заставляет остаться на той же главной странице ######
+    return redirect(url_for('index'))
+
+
+@app.route('/incomplete/<id>')
+def incomplete(id):
+    todo = Todo.query.filter_by(id=int(id)).first()
+    todo.complete = False
+    db.session.commit()
+    ###### заставляет остаться на той же главной странице ######
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
