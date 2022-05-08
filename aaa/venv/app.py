@@ -73,6 +73,16 @@ def delete(id):
     #остаемся на главной странице
     return redirect(url_for('index'))
 
+@app.route('/update/<id>', methods=['POST'])
+def update(id):
+    quer = Todo.query
+    filtr = quer.filter_by(id=int(id))
+    form_name = "todo_" + str(id)
+    todo_text = request.form.get(form_name, "")
+    filtr.update({"text": todo_text})
+    db.session.commit()
+    #остаемся на главной странице
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug = True) #потом надо будет сделать False
