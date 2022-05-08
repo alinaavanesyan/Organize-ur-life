@@ -25,15 +25,16 @@
     <div>
         <div class="div1">
         <h2>Невыполненные задачи</h2>
-            <table>
+
+            <table class="todo_table">
                 {% for todo in incomplete %}
                 <tr>
                     <td>
-                        <button class="check" onclick="window.location.href='{{ url_for('complete', id=todo.id) }}'"></button>
+                       <button class="check" onclick="window.location.href='{{ url_for('complete', id=todo.id) }}'"></button>
                     </td>
                     <td>
-                        <form action="{{ url_for('complete', id=todo.id) }}">
-                            {{ todo.text }}
+                        <form action="{{ url_for('update', id=todo.id) }}" method="POST">
+                            <input type = "text" name="todo_{{ todo.id }}" contenteditable="true"  value="{{todo.text}}" class="edit">
                         </form>
                     </td>
                     <td>
@@ -47,15 +48,15 @@
         <div class="div2">
         <h2>Выполненные задачи</h2>
 
-            <table>
+            <table class="todo_table">
                 {% for todo in complete %}
                 <tr>
                     <td>
                         <button class="check1" onclick="window.location.href='{{ url_for('incomplete', id=todo.id) }}'"></button>
                     </td>
                     <td>
-                        <form action="{{ url_for('incomplete', id=todo.id) }}">
-                           {{ todo.text }}
+                        <form action="{{ url_for('update', id=todo.id) }}" method="POST">
+                            <input type = "text" name="todo_{{ todo.id }}" contenteditable="true" value="{{todo.text}}">
                         </form>
                     </td>
                     <td>
