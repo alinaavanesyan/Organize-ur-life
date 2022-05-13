@@ -1,4 +1,4 @@
-<!doctype html>
+<!Doctype html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,7 @@
     <div>У Вас есть задачи на сегодня?
         <form action="{{ url_for('add') }}" method="POST">
             <input type="text" name="todoitem" class="field" placeholder="Что угодно...">
+            <input type="date" name="deadline">
             <input type="submit" value="добавить" class="button">
         </form>
 
@@ -36,6 +37,7 @@
                         <form action="{{ url_for('update', id=todo.id) }}" method="POST">
                             <input type = "text" name="todo_{{ todo.id }}" contenteditable="true"  value="{{todo.text}}" class="edit">
                         </form>
+                        {{todo.deadline}}
                     </td>
                     <td>
                         <button class="delete" onclick="window.location.href='{{ url_for('delete', id=todo.id) }}'"></button>
@@ -58,6 +60,7 @@
                         <form action="{{ url_for('update', id=todo.id) }}" method="POST">
                             <input type = "text" name="todo_{{ todo.id }}" contenteditable="true" value="{{todo.text}}">
                         </form>
+                        {{todo.deadline}}
                     </td>
                     <td>
                         <button class="delete" onclick="window.location.href='{{ url_for('delete', id=todo.id) }}'"></button>
