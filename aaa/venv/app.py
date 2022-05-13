@@ -1,26 +1,23 @@
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 import random
-
+'''from flask_migrate import Migrate'''
+import datetime
+from datetime import datetime
 
 app = Flask(__name__) #создаём объект на основе класса Flask, передаём название основного файла (app.py)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+'''migrate = Migrate(app, db)'''
+
 
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
+    '''created_on = db.Column(db.DateTime(), default=datetime.now())'''
     text = db.Column(db.String(200), nullable=False)
+    deadline = db.Column(db.DateTime())
     complete = db.Column(db.Boolean)
-
-
-class Quotes(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    quote = db.Column(db.Text, nullable=False)
-    nom = db.Column(db.Text, nullable=False)
-
-    def __repr__(self):
-        return '<Quotes %r>' % self.id
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -42,7 +39,10 @@ def index():
 
 @app.route('/add', methods=['POST'])
 def add():
-    todo = Todo(text=request.form['todoitem'], complete=False)
+    if request.form['deadline'] != "":
+        todo = Todo(text=request.form['todoitem'], deadline=datetime.strptime(request.form['deadline'], "%Y-%m-%d"), complete=False)
+    else:
+        todo = Todo(text=request.form['todoitem'], complete=False)
     db.session.add(todo)
     db.session.commit()
     return redirect(url_for('index'))
@@ -83,6 +83,7 @@ def update(id):
     db.session.commit()
     #остаемся на главной странице
     return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     app.run(debug = True) #потом надо будет сделать False
