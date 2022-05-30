@@ -2,12 +2,13 @@ import os, random, pathlib
 from PIL import Image
 from flask import Flask, render_template, url_for, flash, redirect, request
 from flask import send_file
-from app import app, db,bcrypt
+from app import app, db, bcrypt
 from app.forms import RegistrationForm, LoginForm, UpdateAccountForm
 from flask_login import current_user, login_user
 from app.models import User, Todo
 from flask_login import login_user, current_user, logout_user, login_required
 import matplotlib
+
 matplotlib.use('AGG')
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -15,19 +16,12 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
-#1 страница - домашняя
-@app.route('/')
+
+# 1 страница - домашняя
+@app.route('/', methods=["POST", "GET"])
 def home():
-    complete_today = []
-    incomplete_today = []
-    for stroka in list(Todo.query.filter_by(complete=True).all()):
-        now_date = str(datetime.now().date())
-        if now_date in str(stroka.created_on):
-            complete_today.append(stroka)
-    for stroka in list(Todo.query.filter_by(complete=False).all()):
-        now_date = str(datetime.now().date())
-        if now_date in str(stroka.created_on):
-            incomplete_today.append(stroka)
+    incomplete_today = Todo.query.filter_by(complete=False).order_by(Todo.deadline).all()
+    complete_today = Todo.query.filter_by(complete=True).order_by(Todo.deadline).all()
     with open('app/templates/quotes.txt', encoding="UTF-8") as f:
         if request.method == 'GET':
             n = random.randint(0, 11)
@@ -37,17 +31,45 @@ def home():
                 if k == n:
                     line1 = line
                 elif k == n + 1:
-                    return render_template('home.html', incomplete = incomplete_today, complete = complete_today, line1=line1, line=line)
+                    return render_template('home.html', incomplete=incomplete_today, complete=complete_today,
+                                           line1=line1, line=line)
                 k += 1
-    
+
+@app.route('/sort/<type_sort>', methods=["POST", "GET"])
+def sort(type_sort):
+    t_s = str(type_sort)
+    if t_s == "date":
+        incomplete_today = Todo.query.filter_by(complete=False).order_by(Todo.created_on).all()
+    elif t_s == "importance":
+        incomplete_today = Todo.query.filter_by(complete=False).order_by(Todo.important.desc()).all()
+    elif t_s == "deadline":
+        incomplete_today = Todo.query.filter_by(complete=False).order_by(Todo.deadline).all()
+    complete_today = Todo.query.filter_by(complete=True).order_by(Todo.created_on).all()
+    with open('app/templates/quotes.txt', encoding="UTF-8") as f:
+        if request.method == 'GET':
+            n = random.randint(0, 11)
+            n *= 2
+            k = 0
+            for line in f:
+                if k == n:
+                    line1 = line
+                elif k == n + 1:
+                    return render_template('home.html', incomplete=incomplete_today, complete=complete_today,
+                                           line1=line1, line=line)
+                k += 1
 
 @app.route('/add', methods=["POST", "GET"])
 def add():
     if request.method == "POST":
-        todo = Todo(text=request.form['todoitem'], complete=False)
+        if request.form['deadline'] != "":
+            todo = Todo(text=request.form['todoitem'], deadline=datetime.strptime(request.form['deadline'], "%Y-%m-%d"),
+                        important=request.form['important'], complete=False)
+        else:
+            todo = Todo(text=request.form['todoitem'], important=request.form['important'], complete=False)
         db.session.add(todo)
         db.session.commit()
     return redirect(url_for('home'))
+
 
 @app.route('/complete/<id>')
 def complete(id):
@@ -56,6 +78,7 @@ def complete(id):
     db.session.commit()
     return redirect(url_for('home'))
 
+
 @app.route('/incomplete/<id>')
 def incomplete(id):
     todo = Todo.query.filter_by(id=int(id)).first()
@@ -63,12 +86,14 @@ def incomplete(id):
     db.session.commit()
     return redirect(url_for('home'))
 
-#2 страница - О проекте
+
+# 2 страница - О проекте
 @app.route("/about")
 def about():
     return render_template('about.html', title='О проекте')
 
-#3,4 страницы - регистрация/вход
+
+# 3,4 страницы - регистрация/вход
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -81,6 +106,7 @@ def register():
         db.session.commit()
         return redirect(url_for('login'))
     return render_template('register.html', title='Регистрация', form=form)
+
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -103,7 +129,8 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-#5 страница - аккаунт
+
+# 5 страница - аккаунт
 def user_pic(form_picture):
     chisla = [random.randint(0, 11) for i in range(8)]
     future_name = ''
@@ -119,6 +146,7 @@ def user_pic(form_picture):
     i.save(profile_picture_path)
     return profile_picture
 
+
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
@@ -127,7 +155,7 @@ def account():
         if form.picture.data:
             picture_file = user_pic(form.picture.data)
             current_user.image_file = picture_file
-            image_file = url_for('static', filename='/profile/'+current_user.image_file)
+            image_file = url_for('static', filename='/profile/' + current_user.image_file)
         current_user.username = form.username.data
         current_user.email = form.email.data
         flash('Изменения успешно сохранены')
@@ -136,7 +164,7 @@ def account():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-    image_file = url_for('static', filename='/profile/'+current_user.image_file)
+    image_file = url_for('static', filename='/profile/' + current_user.image_file)
     count_all = len(Todo.query.all())
     count_complete_today = int()
     count_incomplete_today = int()
@@ -152,7 +180,7 @@ def account():
                 count_all_today += 1
         if count_all_today != 0:
             count_incomplete_today = count_all_today - count_complete_today
-            percentage_1 = round(count_complete_today/count_all_today, 2)
+            percentage_1 = round(count_complete_today / count_all_today, 2)
             percentage_2 = round(1 - percentage_1, 2)
             values = [percentage_1, percentage_2]
             labels = ['завершено', 'не завершено']
@@ -165,14 +193,16 @@ def account():
     else:
         values = [1, 0]
         labels = ['завершено', 'не завершено']
-        fig = go.Figure(data=[go.Pie(labels=labels, values=values,textinfo = "none", hole=.5)])
+        fig = go.Figure(data=[go.Pie(labels=labels, values=values, textinfo="none", hole=.5)])
         fig.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         colors = ['#637cfb', '#bebebe']
         fig.update_traces(textfont_size=28, marker=dict(colors=colors, line=dict(color='#000000', width=2)))
         fig.write_image(str(pathlib.Path('app/static/images/op.svg')), format='svg')
-        
+
     return render_template('account.html', title='Личный кабинет',
-                           image_file=image_file, form=form, count_complete=count_complete_today, count_incomplete=count_incomplete_today)
+                           image_file=image_file, form=form, count_complete=count_complete_today,
+                           count_incomplete=count_incomplete_today)
+
 
 @app.route("/account/page2", methods=['GET', 'POST'])
 @login_required
@@ -182,7 +212,7 @@ def countdown():
         if form.picture.data:
             picture_file = user_pic(form.picture.data)
             current_user.image_file = picture_file
-            image_file = url_for('static', filename='/profile/'+current_user.image_file)
+            image_file = url_for('static', filename='/profile/' + current_user.image_file)
         current_user.username = form.username.data
         current_user.email = form.email.data
         flash('Изменения успешно сохранены')
@@ -191,8 +221,8 @@ def countdown():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-    image_file = url_for('static', filename='/profile/'+current_user.image_file)
-    
+    image_file = url_for('static', filename='/profile/' + current_user.image_file)
+
     count_all = len(Todo.query.all())
     count_complete_today = int()
     count_incomplete_today = int()
@@ -208,7 +238,7 @@ def countdown():
                 count_all_today += 1
         if count_all_today != 0:
             count_incomplete_today = count_all_today - count_complete_today
-            percentage_1 = round(count_complete_today/count_all_today, 2)
+            percentage_1 = round(count_complete_today / count_all_today, 2)
             percentage_2 = round(1 - percentage_1, 2)
             values = [percentage_1, percentage_2]
             labels = ['завершено', 'не завершено']
@@ -221,12 +251,11 @@ def countdown():
     else:
         values = [1, 0]
         labels = ['завершено', 'не завершено']
-        fig = go.Figure(data=[go.Pie(labels=labels, values=values,textinfo = "none", hole=.5)])
+        fig = go.Figure(data=[go.Pie(labels=labels, values=values, textinfo="none", hole=.5)])
         fig.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         colors = ['#637cfb', '#bebebe']
         fig.update_traces(textfont_size=28, marker=dict(colors=colors, line=dict(color='#000000', width=2)))
         fig.write_image(str(pathlib.Path('app/static/images/op.svg')), format='svg')
-        
 
     if request.method == 'POST':
         if request.form.get('t'):
@@ -240,16 +269,19 @@ def countdown():
                     mins, secs = divmod(t, 60)
                     timer = '{:02d}:{:02d}'.format(mins, secs)
                     t -= 1
-                    list6.append(timer) 
+                    list6.append(timer)
                 return render_template('account_page2.html', title='Личный кабинет',
-                           image_file=image_file, form=form, count_complete=count_complete_today, count_incomplete=count_incomplete_today, uved=uved, list6=list6)
+                                       image_file=image_file, form=form, count_complete=count_complete_today,
+                                       count_incomplete=count_incomplete_today, uved=uved, list6=list6)
             else:
-                uved ='Некорректный запрос'
+                uved = 'Некорректный запрос'
                 return render_template('account_page2.html', title='Личный кабинет',
-                           image_file=image_file, form=form, count_complete=count_complete_today, count_incomplete=count_incomplete_today, uved=uved)
+                                       image_file=image_file, form=form, count_complete=count_complete_today,
+                                       count_incomplete=count_incomplete_today, uved=uved)
 
     return render_template('account_page2.html', title='Личный кабинет',
-                           image_file=image_file, form=form, count_complete=count_complete_today, count_incomplete=count_incomplete_today)
+                           image_file=image_file, form=form, count_complete=count_complete_today,
+                           count_incomplete=count_incomplete_today)
 
 
 @app.route("/account/chart1")
@@ -291,17 +323,19 @@ def chart2():
     x = [str(x) for x in dict2.keys()]
     y = [int(y) for y in dict2.values()]
     fig, ax = plt.subplots()
-    ax.bar(x,y)
+    ax.bar(x, y)
     plt.grid()
     buf2 = BytesIO()
     plt.savefig(buf2)
     buf2.seek(0)
     return send_file(buf2, mimetype='img/png')
 
+
 @app.route("/account/image1")
 def image1():
     path_image1 = os.path.join(app.config['UPLOAD_FOLDER'], 'кот1.gif')
     return send_file(path_image1)
+
 
 @app.route("/account/image2")
 def image2():
@@ -315,6 +349,7 @@ def delete(id):
     db.session.delete(todo)
     db.session.commit()
     return redirect(url_for('home'))
+
 
 @app.route('/update/<id>', methods=['POST'])
 def update(id):
