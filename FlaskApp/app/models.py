@@ -4,18 +4,12 @@ from flask_login import UserMixin
 
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
+    created_on = db.Column(db.DateTime(), default=datetime.now())
     text = db.Column(db.String(200), nullable=False)
+    deadline = db.Column(db.DateTime())
+    important = db.Column(db.String(200))
     complete = db.Column(db.Boolean)
-    created_on = db.Column(db.DateTime, default=datetime.now)
 
-
-class Quotes(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    quote = db.Column(db.Text, nullable=False)
-    nom = db.Column(db.Text, nullable=False)
-
-    def __repr__(self):
-        return '<Quotes %r>' % self.id
 
 
 @login_manager.user_loader
@@ -32,6 +26,5 @@ class User(db.Model, UserMixin):
     
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
-
 
 db.create_all()
