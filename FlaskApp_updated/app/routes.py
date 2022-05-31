@@ -68,7 +68,7 @@ def sort_incomplete(type_sort):
                     line1 = line
                 elif k == n + 1:
                     return render_template('home.html', incomplete=incomplete_today, complete=complete_today, 
-                    incomplete_old=incomplete_old, line1=line1, line=line)
+                    incomplete_old=incomplete_old, line1=line1, line=line, now_date=now_date)
                 k += 1
 
 @app.route('/sort_complete/<type_sort>', methods=["POST", "GET"])
@@ -403,10 +403,3 @@ def update(id):
     filtr.update({"text": todo_text})
     db.session.commit()
     return redirect(url_for('home'))
-
-@property
-def is_past_due(self):
-    our_date = datetime.now()
-    date_now = datetime.strptime(str(our_date), "%Y-%m-%d %H:%M:%S.%f")
-    other_date = datetime.strptime(str(self), "%Y-%m-%d %H:%M:%S")
-    return date_now > other_date
