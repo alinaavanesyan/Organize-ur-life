@@ -57,6 +57,7 @@ def sort_incomplete(type_sort):
         incomplete_today = Todo.query.filter_by(complete=False).filter(Todo.created_on.contains(str(datetime.now().date()))).order_by(Todo.deadline).all()
     
     complete_today = Todo.query.filter_by(complete=True).filter(Todo.created_on.contains(str(datetime.now().date()))).order_by(Todo.created_on).all()
+    now_date = datetime.strptime(str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f")
     with open('app/templates/quotes.txt', encoding="UTF-8") as f:
         if request.method == 'GET':
             n = random.randint(0, 11)
