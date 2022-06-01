@@ -36,7 +36,7 @@
       {% endif %}
       </nav>
   </header>
-
+<main>
   <div class="quotes">
     <i> {{ line1 }} </i>
     <p align="right"> {{ line }}</p>
@@ -53,7 +53,7 @@
             <div class="row mb-4 mt-4">
               <div class="col-5"><input type="text" name="todoitem" class="field" placeholder="Что угодно..."></div>
               <div class="col-4"><input type="submit" value="добавить" class="button"></div>
-            
+
             </div>
 
             <div class="align" id="panel">
@@ -65,7 +65,7 @@
 
 
               <div class="col-sm"><input class="parametr" type="datetime-local" name="deadline"></div>
-            
+
               <div class="col-sm">
                 <select id="important" class="select-css" name="important">
                   <option value="Срочно" class="option">Срочно</option>
@@ -74,7 +74,7 @@
                 </select>
               </div>
 
-            </div>  
+            </div>
             </div>
           </form>
 
@@ -94,7 +94,7 @@
                   <td>
                     <button class="check" onclick="window.location.href='{{ url_for('complete', id=todo.id) }}'"></button>
                   </td>
-                  
+
                   <td>
                     <div class="punkt" style="margin-bottom: 5px; margin-top: 5px;">
                         <form action="{{ url_for('update', id=todo.id) }}" method="POST">
@@ -102,7 +102,7 @@
                         </form>
                     </div>
                   </td>
-                  
+
                   <td>
                     <button class="delete" onclick="window.location.href='{{ url_for('delete', id=todo.id) }}'"></button>
                   </td>
@@ -118,7 +118,7 @@
                     <a style="color: rgb(0, 0, 0);">{{todo.deadline}}</a>
                   {% endif %}
                 {% endif %}
-    
+
                 {% if todo.important=='Срочно' %}
                   <a style="background: rgb(255, 112, 112)">{{todo.important}}</a>
                 {% elif todo.important=='Подождёт' %}
@@ -129,7 +129,7 @@
                 {% endfor %}
              </td>
           </tr>
-      
+
           </table>
           </div>
 
@@ -168,7 +168,7 @@
                   <a style="color: rgb(0, 0, 0);">{{todo.deadline}}</a>
                   {% endif %}
                   {% endif %}
-    
+
                 {% if todo.important=='Срочно' %}
                 <a style="background: rgb(255, 112, 112)">{{todo.important}}</a>
                 {% elif todo.important=='Подождет' %}
@@ -186,7 +186,7 @@
       </div>
     </div>
   </div>
-        
+
   <div class="container rounded bg-white mt-4 mb-4">
     <div class="row mt-4 mb-4 p-4">
       <h2 style="margin-top: 30px; margin-left: 2%; ">Невыполненные задачи за всё время</h2>
@@ -229,10 +229,40 @@
       </td>
       </tr>
     </table>
-    
+
   </div>
 </div>
 </div>
-
+  </main>
+<aside class="container write">
+        <table align="center" width="350">
+		<tr>
+		<td colspan="3" align="center"> <h5> По вопросам работы сайта </h5></td>
+		</tr>
+            <tr>
+            <td align="center"><h6>ВКонтакте</h6></td>
+            <td align="center"><h6>Телеграм</h6></td>
+          </tr>
+          <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/alinaavanesyan">@alinaavanesyan</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/alina_avanesyan">@alina_avanesyan</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/dreamerk8">@dreamerk8</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/petal_of_fire">@petal_of_fire</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/abinakukanova">@abinakukanova</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/abinakukanova">@abinakukanova</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/alyonaa13">@alyonaa13</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/s_alyona_a">@s_alyona_a</a></td>
+          </tr>
+        </table>
+      </aside>
+    <footer>
+		<p class="bot" align="right">&copy; Organize ur life, 2021</p>
+	</footer>
 </body>
 </html>
