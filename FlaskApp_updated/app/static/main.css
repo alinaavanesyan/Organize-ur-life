@@ -16,11 +16,11 @@ body {
   }
 .navbar a {
   list-style: none;
-  font-size: 18px; 
+  font-size: 18px;
   letter-spacing: 2px;
   transition: .3s linear;
-  color: #fff; 
-  text-decoration: none; 
+  color: #fff;
+  text-decoration: none;
   height: 35px;
   padding-left: 3%;
   padding-right: 3%;
@@ -29,7 +29,7 @@ body {
   background: linear-gradient(135deg, #9a0dfe75, #637cfb75);
   border-radius: 10px;
   color: #fff;
-  font-size: 20px; 
+  font-size: 20px;
 }
 /* home */
 .quotes{
@@ -349,4 +349,28 @@ color: #ffffff;
 }
 .startButton:hover{
   box-shadow:0 0 15px 4px #ae00ff47;
+}
+
+/*about*/
+.write {
+  text-align: left;
+  color: #fff;
+  margin-bottom: 10px;
+  padding: 5px;
+  color: black;
+  background-color: #E3E5E5;
+  border: 0px;
+}
+.gradient {
+	color: transparent;
+	-webkit-background-clip: text;
+	background-clip: text;
+	background-image: linear-gradient(to right, #001675, black);
+}
+.bot{
+margin-right: 10%;
+}
+.blocks_interval{
+margin-bottom: 2%;
+padding: 1%;
 }
