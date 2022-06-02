@@ -37,6 +37,19 @@
       </nav>
   </header>
 <main>
+    <button id='button' class="button-fon">Поменять фон</button>
+    <script>
+        const button = document.getElementById('button');
+        const rainbow = ["#200924", "#fafafa"];
+        k = 0;
+        function changeBackground(){
+            document.body.style.background = rainbow[k % 2];
+            k += 1;
+
+        }
+
+        button.addEventListener('click', changeBackground);
+    </script>
   <div class="quotes">
     <i> {{ line1 }} </i>
     <p align="right"> {{ line }}</p>
