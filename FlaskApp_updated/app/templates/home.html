@@ -34,22 +34,21 @@
         <a href="{{ url_for('login') }}">Войти</a>
         <a href="{{ url_for('register') }}">Регистрация</a>
       {% endif %}
+        <button id='button' class="button-fon">Поменять фон</button>
+    <script>
+        const button = document.getElementById('button');
+        const theme = ["#200924", "#fafafa"];
+        k = 0;
+        function changeBackground(){
+            document.body.style.background = theme[k % 2];
+            k += 1;
+        }
+        button.addEventListener('click', changeBackground);
+    </script>
       </nav>
   </header>
 <main>
-    <button id='button' class="button-fon">Поменять фон</button>
-    <script>
-        const button = document.getElementById('button');
-        const rainbow = ["#200924", "#fafafa"];
-        k = 0;
-        function changeBackground(){
-            document.body.style.background = rainbow[k % 2];
-            k += 1;
 
-        }
-
-        button.addEventListener('click', changeBackground);
-    </script>
   <div class="quotes">
     <i> {{ line1 }} </i>
     <p align="right"> {{ line }}</p>
