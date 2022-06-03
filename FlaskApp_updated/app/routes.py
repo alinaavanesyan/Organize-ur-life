@@ -417,8 +417,9 @@ def calendar(yr, mn):
         yr = today_dt.year
         mn = today_dt.month
 
-    start_dt = datetime(year=int(yr), month=int(mn), day=1)
-    end_dt = datetime(year=int(yr), month=int(mn)+1, day=1)
+    mn = int(mn)
+    start_dt = datetime(year=int(yr), month=mn, day=1)
+    end_dt = datetime(year=int(yr), month=(mn + 1 if mn < 12 else 1), day=1)
     month_tasks = collections.defaultdict(list)
     for task_todo in list(Todo.query.filter((Todo.created_on >= start_dt) & (Todo.created_on < end_dt)).all()):
         day_key = task_todo.created_on.day
