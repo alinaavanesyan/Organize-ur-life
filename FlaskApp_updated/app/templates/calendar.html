@@ -62,7 +62,6 @@
         function renderMonth(monthData)
         {
 
-            // var month_tasks = "{{ mn_tasks | tojson }}";
             var month_tbl = document.getElementById('render-month');
             for (let i = 0; i < monthData.length; i++) {
                 const tr = month_tbl.insertRow();
@@ -83,7 +82,6 @@
                                 let task_todo = month_tasks[mday][itodo]
                                 let childDiv = document.createElement("div");
                                 childDiv.innerText = task_todo.text
-                                //childDiv.setAttribute("data-title", task_todo.text)
                                 childDiv.title = task_todo.text + "\ncreated: " + task_todo.created + "\ndeadline: " + task_todo.deadline
                                 if(task_todo.priority === "Срочно")
                                     childDiv.className = "pr_high";
@@ -114,7 +112,6 @@
             var prev_btn = document.getElementById('prev')
             var next_btn = document.getElementById('next')
 
-            //prev_btn.click(function () { switchMonth(false); });
             prev_btn.addEventListener('click',function () { switchMonth(false); })
             next_btn.addEventListener('click',function () { switchMonth(true); })
             label.addEventListener('click',function () { switchMonth(null, new Date().getMonth(), new Date().getFullYear()); });
@@ -132,7 +129,6 @@
         }
 
         function switchMonth(next, month, year){
-            // alert("This is an alert message box.");
             var curr = label.innerText.toLowerCase().trim().split(" "), currYear =  parseInt(curr[1], 10);
 
             year = year || currYear
