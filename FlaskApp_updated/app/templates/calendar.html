@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+
+    {% if title %}
+        <title>Organize ur life - {{ title }}</title>
+    {% else %}
+        <title>Organize ur life</title>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class=flashes>
+    {% for message in messages %}
+      <li class="flashess">{{ message }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</head>
+<body>
+    <script language="JavaScript">
+        var months, label;
+        var month_tasks = {};
+
+        class TaskTodo{
+            constructor(text, complete, created, deadline, priority) {
+                this.text = text;
+                this.complete = complete;
+                this.created = created;
+                this.deadline = deadline;
+                this.priority = priority;
+            }
+        };
+
+        function createCalendarMonth(year, month) {
+            var iStartDay = (new Date(year, month - 1, 1).getDay() + 6) % 7; // 0 - 6 (Mon: 0, Tue: 1, ..., Sun: 6)
+            var emptyWeek = ["", "", "", "", "", "", ""];
+            var monthCalendar = [emptyWeek.slice()]; // list of weeks (lists)
+            var monthDayNum = daysInMonth(month - 1, year);
+
+            var iday; // 0 - 30
+            for(iday = 0; iday < monthDayNum; iday++)
+            {
+                var iweek = Math.floor((iday + iStartDay) / 7); // 0 - 5
+                var iWeekDay = (iday + iStartDay) % 7; // 0 - 6
+
+                if(iWeekDay === 0 && iweek > 0){ //add new week to list
+                    monthCalendar[iweek] = emptyWeek.slice();
+                }
+
+                monthCalendar[iweek][iWeekDay] = (iday + 1).toString();
+            }
+
+            return monthCalendar;
+        }
+
+        function renderMonth(monthData)
+        {
+
+            // var month_tasks = "{{ mn_tasks | tojson }}";
+            var month_tbl = document.getElementById('render-month');
+            for (let i = 0; i < monthData.length; i++) {
+                const tr = month_tbl.insertRow();
+                for (let j = 0; j < 7; j++) {
+                    const td = tr.insertCell();
+                    childDiv = document.createElement("div");
+                    childDiv.innerText = monthData[i][j]
+                    td.appendChild(childDiv)
+
+                    if(monthData[i][j] === ""){
+                        td.className = "nul";
+                    }
+                    else{
+                        td.className = "weekday";
+                        mday = monthData[i][j];
+                        if(month_tasks[mday])
+                            for(let itodo in month_tasks[mday]){
+                                let task_todo = month_tasks[mday][itodo]
+                                let childDiv = document.createElement("div");
+                                childDiv.innerText = task_todo.text
+                                //childDiv.setAttribute("data-title", task_todo.text)
+                                childDiv.title = task_todo.text + "\ncreated: " + task_todo.created + "\ndeadline: " + task_todo.deadline
+                                if(task_todo.priority === "Срочно")
+                                    childDiv.className = "pr_high";
+                                else if(task_todo.priority === "Подождёт")
+                                    childDiv.className = "pr_medium";
+                                else if(task_todo.priority === "Если силы останутся")
+                                    childDiv.className = "pr_low";
+                                else
+                                    childDiv.className = "pr_none";
+                                td.appendChild(childDiv)
+                            }
+                    }
+                    // td.appendChild(document.createTextNode(monthData[i][j] + " " + str_daytasks));
+
+
+                    // + " " + str_daytasks));
+                }
+            }
+        }
+
+        function init_cal() {
+            months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+            var wrap = document.getElementById('calendar');
+            label = document.getElementById('label');
+            label.innerText = monthName("{{ c_month }}") + " " + "{{ c_year }}";
+
+            var prev_btn = document.getElementById('prev')
+            var next_btn = document.getElementById('next')
+
+            //prev_btn.click(function () { switchMonth(false); });
+            prev_btn.addEventListener('click',function () { switchMonth(false); })
+            next_btn.addEventListener('click',function () { switchMonth(true); })
+            label.addEventListener('click',function () { switchMonth(null, new Date().getMonth(), new Date().getFullYear()); });
+
+            monthCal = createCalendarMonth("{{ c_year }}", "{{ c_month }}");
+            renderMonth(monthCal)
+        }
+
+        function monthName(month_num){
+            return months[month_num - 1]
+        }
+
+        function daysInMonth (month, year) {
+            return new Date(year, month + 1, 0).getDate();
+        }
+
+        function switchMonth(next, month, year){
+            // alert("This is an alert message box.");
+            var curr = label.innerText.toLowerCase().trim().split(" "), currYear =  parseInt(curr[1], 10);
+
+            year = year || currYear
+            if (!month) {
+                if (next) {
+                    if (curr[0] === "december") {
+                        month = 0;
+                        year = currYear + 1;
+                    } else {
+                        month = months.indexOf(curr[0]) + 1;
+                    }
+                } else {
+                    if (curr[0] === "january") {
+                        month = 11;
+                        year = currYear - 1;
+                    } else {
+                        month = months.indexOf(curr[0]) - 1;
+                    }
+                }
+            }
+
+            window.location = "{{ url_for('calendar') }}" + "/" + year + "/" + (month+1);
+        }
+    </script>
+
+    {% for key,lst_tasks in mn_tasks.items() %}
+        <script language="JavaScript">
+            month_tasks["{{ key }}"] = [];
+        </script>
+        {% for taskp in lst_tasks %}
+            <script language="JavaScript">
+
+                month_tasks["{{ key }}"].push(new TaskTodo("{{taskp[0]}}", "{{taskp[1]}}",
+                    (new Date("{{taskp[2]}}")).toDateString(), "{{taskp[3]}}", "{{taskp[4]}}"));
+            </script>
+        {% endfor %}
+    {% endfor %}
+
+
+  <header class="site-header">
+    <nav class="navbar">
+      <a href="/" style="font-size: 20px; "><b>Organize ur life</b></a>
+      <a href="{{ url_for('about') }}">О нас</a>
+      <a href="{{ url_for('calendar') }}">Календарь</a>
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('account') }}">Личный кабинет</a>
+        <a href="{{ url_for('logout') }}">Выйти</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Войти</a>
+        <a href="{{ url_for('register') }}">Регистрация</a>
+      {% endif %}
+      </nav>
+  </header>
+
+  <div id="calendar">
+    <div class="header_cal">
+        <span class="l_button" id="prev"> &#171 </span>
+        <span class="month-year" id="label">  </span>
+        <span class="r_button" id="next"> &#187 </span>
+    </div>
+
+    <div id="cal-frame">
+<!--setka kalendara-->
+        <table class="curr" id="render-month">
+    <tbody>
+    <tr>
+        <td class="week">Пн</td>
+        <td class="week">Вт</td>
+        <td class="week">Ср</td>
+        <td class="week">Чт</td>
+        <td class="week">Пт</td>
+        <td class="week">Сб</td>
+        <td class="week">Вс</td>
+    </tr>
+    </tbody>
+        </table>
+    </div>
+
+  </div>
+
+    <div class="deadlines_cal">
+    </div>
+
+    <div>
+      <h2 style="margin-top: 30px; margin-left: 2%; ">Дедлайны в этом месяце</h2>
+      <table style="margin-top: 20px; margin-left: 2%;">
+        {% for todo in mn_deadlines %}
+        <tr>
+            <td>
+               <button class="check" onclick="window.location.href='{{ url_for('home') }}'" style="margin-right: 1px;"></button>
+            </td>
+            <td>
+              <div class="punkt" style="margin-bottom: 2px; margin-top: 2px;">
+                <form action="{{ url_for('update', id=todo.id) }}" method="POST">
+                    <input type = "text" name="todo_{{ todo.id }}" contenteditable="true" value="{{todo.text}}" class="edit">
+                    <input type="datetime-local" name="deadline_{{ todo.id }}" value="{{todo.deadline.isoformat()}}">
+                </form>
+              </div>
+            </td>
+            <td>
+                {% if todo.important=='Срочно' %}
+                <a style="background: rgb(255, 112, 112)">{{todo.important}}</a>
+                {% elif todo.important=='Подождет' %}
+                <a style="background: #fbff00;">{{todo.important}}</a>
+                {% elif todo.important=='Если силы останутся' %}
+                <a style="background: #aeff9a;;">{{todo.important}}</a>
+                {% endif %}
+            </td>
+            <td>
+                <button class="delete" onclick="window.location.href='{{ url_for('delete', id=todo.id) }}'"></button>
+            </td>
+          </tr>
+        {% endfor %}
+    </table>
+
+  </div>
+
+
+    <script language="JavaScript">
+        init_cal();
+    </script>
+
+</body>
+</html>
