@@ -27,6 +27,7 @@
     <nav class="navbar">
       <a href="/" style="font-size: 20px; "><b>Organize ur life</b></a>
       <a href="{{ url_for('about') }}">О нас</a>
+      <a href="{{ url_for('calendar') }}">Календарь</a>
       {% if current_user.is_authenticated %}
         <a href="{{ url_for('account') }}">Личный кабинет</a>
         <a href="{{ url_for('logout') }}">Выйти</a>
