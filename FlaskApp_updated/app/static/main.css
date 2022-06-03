@@ -515,3 +515,25 @@ div. pr_high{
  color: #ac8abc;
 }
 
+.link{
+  background: #ffffff;
+  border: 1.5px solid #000000;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.5em;
+  background-repeat: no-repeat;
+  background-position: center center
+  background-size: 50% 50%;
+}
+.link:hover{
+  background: #5B2475;
+  box-shadow:0 0 15px 4px #ae00ff47;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50% 50%;
+
+.link:focus{
+  outline: none;
+  box-shadow: 0 0 0 4px #cbd6ee;
+
+}
