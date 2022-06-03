@@ -379,12 +379,10 @@ padding: 1%;
     box-shadow: 12px 12px 2px 0.5px rgb(204, 184, 224);
     font: 13px/1.5 franklin gothic medium;
     display:table;
-    width: auto;
+    width:47%;
     height: auto;
-    margin-top: 100px;
+    margin-top: 5%;
     margin-left: 5%;
-
-
 }
 /*заголовок календаря*/
 .header_cal {
@@ -398,22 +396,20 @@ padding: 1%;
     font-weight:bold;
     text-shadow:0px -1px 0 #87260C;
     text-transform: uppercase;
-
-
 }
 
 .l_button{
     display:inline-block;
     line-height:34px;
-    margin-left:10%;
     font-size: 3em;
+    margin-left:4%;
     vertical-align:text-bottom;
 }
 
 
 .month-year{
     letter-spacing: 0.8px;
-    width: 50vw;
+    width: 89%;
     text-align: center;
     display:inline-block;
     font-size: 1.2em;
@@ -429,21 +425,21 @@ padding: 1%;
 #calendar table {
     background:#F5F5F5;
     border-collapse:collapse;
-    min-width: 69vw;
+    min-width: 100%;
 }
 #calendar td {
     height:97px;
     line-height:30px;
     text-align: center;
     border:1px solid #e6e6e6;
-    color: #5B2475;
-    max-width: 10vw;
+    max-width: 9vh;
 }
 
 .week{
    border-collapse: collapse;
    margin: 20px 10px 10px;
-   font-size:20px;
+   font-size:25px;
+   color: #5B2475;
 }
 #cal-frame .weekday {
   border-collapse: collapse;
@@ -452,25 +448,26 @@ padding: 1%;
   vertical-align:-100%;
   padding: 2px 5px 10px;
   font-size:15px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 #cal-frame table {
-    /*width: 69vw;*/
     margin: auto;
     table-layout: fixed;
+
 }
-#cal-frame td:not(.nil):hover {
+#cal-frame td:not(.nul):hover {
     color:#fff;
     background:#C9A0DC;
     cursor: pointer;
 }
-
-#calendar .header_cal:hover {
+#cal-frame div:hover {
+    color:#fff;
     cursor: pointer;
-
+}
+div. pr_high{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .deadlines_cal{
   border: 2px rgb(204, 184, 224);
@@ -483,6 +480,9 @@ padding: 1%;
 .pr_none{
   background: #637cfb;
   white-space: nowrap;
+  color:#5B2475;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pr_high{
@@ -490,6 +490,8 @@ padding: 1%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color:#5B2475;
+
 }
 
 .pr_medium{
@@ -497,40 +499,19 @@ padding: 1%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color:#5B2475;
 }
 
 .pr_low{
-  background: lightgreen;
+  background: PaleGreen;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color:#5B2475;
 }
 
-[data-title] {
-  position: relative;
-  cursor: help;
+.number{
+ font-size: 20px;
+ color: #ac8abc;
 }
 
-[data-title]:hover::before {
-  content: attr(data-title);
-  position: absolute;
-  bottom: -26px;
-  display: inline-block;
-  padding: 3px 6px;
-  border-radius: 2px;
-  background: #000;
-  color: #fff;
-  /*font-size: 12px;*/
-  /*font-family: sans-serif;*/
-  /*white-space: nowrap;*/
-}
-[data-title]:hover::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 8px;
-  display: inline-block;
-  color: #fff;
-  border: 8px solid transparent;
-  border-bottom: 8px solid #000;
-}
