@@ -400,6 +400,32 @@ def update(id):
     filtr = quer.filter_by(id=int(id))
     form_name = "todo_" + str(id)
     todo_text = request.form.get(form_name, "")
-    filtr.update({"text": todo_text})
+    upd_dict = {"text": todo_text}
+    deadline_name = "deadline_" + str(id)
+    todo_deadline = request.form.get(deadline_name, None)
+    if todo_deadline is not None:
+        upd_dict["deadline"] = datetime.fromisoformat(todo_deadline)
+    filtr.update(upd_dict)
     db.session.commit()
     return redirect(url_for('home'))
+
+@app.route("/calendar", defaults={'yr': None, 'mn': None})
+@app.route("/calendar/<yr>/<mn>")
+def calendar(yr, mn):
+    if yr is None and mn is None:
+        today_dt = datetime.today()
+        yr = today_dt.year
+        mn = today_dt.month
+
+    start_dt = datetime(year=int(yr), month=int(mn), day=1)
+    end_dt = datetime(year=int(yr), month=int(mn)+1, day=1)
+    month_tasks = collections.defaultdict(list)
+    for task_todo in list(Todo.query.filter((Todo.created_on >= start_dt) & (Todo.created_on < end_dt)).all()):
+        day_key = task_todo.created_on.day
+        month_tasks[day_key].append([task_todo.text, task_todo.complete, task_todo.created_on, task_todo.deadline, task_todo.important])
+
+    month_deadlines = []
+    for task_todo in list(Todo.query.filter((Todo.deadline >= start_dt) & (Todo.deadline < end_dt)).order_by(Todo.deadline).all()):
+        month_deadlines.append(task_todo)
+
+    return render_template('calendar.html', title='Календарь', c_year=yr, c_month=mn, mn_tasks=month_tasks, mn_deadlines=month_deadlines)
