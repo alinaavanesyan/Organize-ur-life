@@ -84,7 +84,7 @@
                                 let childDiv = document.createElement("div");
                                 childDiv.innerText = task_todo.text
                                 //childDiv.setAttribute("data-title", task_todo.text)
-                                childDiv.title = task_todo.text + "\ncreated: " + task_todo.created + "\ndeadline: " + task_todo.deadline
+                                childDiv.title = task_todo.text + "\ncreated: " + task_todo.created + "\ndeadline: " + task_todo.deadline + "\ncomplete:" + task_todo.complete
                                 if(task_todo.priority === "Срочно")
                                     childDiv.className = "pr_high";
                                 else if(task_todo.priority === "Подождёт")
