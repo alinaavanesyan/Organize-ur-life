@@ -35,7 +35,7 @@
         <a href="{{ url_for('login') }}">Войти</a>
         <a href="{{ url_for('register') }}">Регистрация</a>
       {% endif %}
-      <button id='button_fon' class="button-fon">Поменять фон</button>
+      <button id='button_fon' class="button-fon">Поменять тему</button>
       <script>
           const button = document.getElementById('button_fon');
           if (localStorage.getItem('theme') == false){
