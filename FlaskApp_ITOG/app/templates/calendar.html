@@ -247,25 +247,17 @@
         {% for todo in mn_deadlines %}
         <tr>
             <td>
-               <button class="check" onclick="window.location.href='{{ url_for('home') }}'" style="margin-right: 1px;"></button>
+               <p class="str675" onclick="window.location.href='{{ url_for('home') }}'" style="margin-right: 1px;"></p>
             </td>
             <td>
-                <input type = "text" name="todo_{{ todo.id }}" contenteditable="true" value="{{todo.text}}" class="edit">
-            </td>
-            <td>
-                <button class="delete" onclick="window.location.href='{{ url_for('delete', id=todo.id) }}'"></button>
-            </td>
-        </tr>
-        <tr>
-        <td></td>
-        <td>
               <div class="punkt" style="margin-bottom: 2px; margin-top: 2px;">
                 <form action="{{ url_for('update', id=todo.id) }}" method="POST">
+                    <input type = "text" name="todo_{{ todo.id }}" contenteditable="true" value="{{todo.text}}" class="edit">
                     <input type="datetime-local" name="deadline_{{ todo.id }}" value="{{todo.deadline.isoformat()}}">
                 </form>
               </div>
-        </td>
-        <td>
+            </td>
+            <td>
                 {% if todo.important=='Срочно' %}
                 <a style="background: rgb(255, 112, 112)">{{todo.important}}</a>
                 {% elif todo.important=='Подождет' %}
@@ -273,8 +265,11 @@
                 {% elif todo.important=='Если силы останутся' %}
                 <a style="background: #aeff9a;;">{{todo.important}}</a>
                 {% endif %}
-        </td>
-        </tr>
+            </td>
+            <td>
+                <button class="delete" onclick="window.location.href='{{ url_for('delete', id=todo.id) }}'"></button>
+            </td>
+          </tr>
         {% endfor %}
     </table>
 
