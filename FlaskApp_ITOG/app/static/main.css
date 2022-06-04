@@ -538,7 +538,7 @@ padding: 1%;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 50% 50%;
-
+}
 .link:focus{
   outline: none;
   box-shadow: 0 0 0 4px #cbd6ee;
