@@ -192,7 +192,7 @@ body {
   background: linear-gradient(135deg, #9a0dfe, #637cfb);
   cursor: pointer;
   overflow: hidden;
-  z-index: 1;    
+  z-index: 1;
 }
 .modal-checkbox:before {
   content: '';
@@ -219,7 +219,7 @@ body {
 #modal-checkbox:checked + .modal1 {
   display:flex;
   align-items:center;
-  justify-content:center;    
+  justify-content:center;
   z-index: 4;
   position: fixed;
   left: 0;
@@ -277,7 +277,7 @@ color: #ffffff;
   background: linear-gradient(135deg, #9a0dfe75, #637cfb75);
   border-radius: 10px;
   color: #fff;
-  font-size: 20px; 
+  font-size: 20px;
   border: 10px;
   width: 50%;
   margin: 0 auto;
@@ -313,7 +313,7 @@ color: #ffffff;
 }
 .task_name{
   font-size: 20px;
-  font-family: Lucida Console, bold ; 
+  font-family: Lucida Console, bold ;
 }
 /* account - 3 столбец */
 .button2{
@@ -531,9 +531,28 @@ div. pr_high{
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 50% 50%;
+}
 
 .link:focus{
   outline: none;
   box-shadow: 0 0 0 4px #cbd6ee;
 
+}
+
+.button-fon{
+  display: inline-block;
+  border: 3px solid;
+  color: #ffffff;
+  border-color: #9a0dfe;
+  border-radius: 25px;
+  white-space: nowrap;
+  margin: 3px 0px;
+  transition: all .2s;
+  font-weight: bold;
+  background: #000;
+}
+.button-fon:hover{
+  background: #9a0dfe;
+  color: rgb(255, 255, 255);
+  font-weight: bold;
 }
