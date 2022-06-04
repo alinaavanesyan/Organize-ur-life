@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+
+    {% if title %}
+        <title>Organize ur life - {{ title }}</title>
+    {% else %}
+        <title>Organize ur life</title>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class=flashes>
+    {% for message in messages %}
+      <li class="flashess">{{ message }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar">
+      <a href="/" style="font-size: 20px; "><b>Organize ur life</b></a>
+      <a href="{{ url_for('about') }}">О нас</a>
+      <a href="{{ url_for('calendar') }}">Календарь</a>
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('account') }}">Личный кабинет</a>
+        <a href="{{ url_for('logout') }}">Выйти</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Войти</a>
+        <a href="{{ url_for('register') }}">Регистрация</a>
+      {% endif %}
+      <button id='button_fon' class="button-fon">Поменять фон</button>
+      <script>
+          const button = document.getElementById('button_fon');
+          if (localStorage.getItem('theme') == false){
+            localStorage.setItem('theme', '0')
+          }
+          function changeBackground(){
+            if (localStorage.getItem('theme') == '1'){
+              localStorage.setItem('theme', '0')
+              document.body.style.background = "#fafafa";
+            }
+            else{
+              localStorage.setItem('theme', '1')
+              document.body.style.background = "#200924";        
+            }
+          }
+          if (localStorage.getItem('theme') == '1'){
+            document.body.style.background = "#200924";
+          }
+          else{
+            document.body.style.background = "#fafafa";
+          }
+          button.addEventListener('click', changeBackground);
+      </script>
+    </nav>
+  </header>
+  <main>
+  <div class="container rounded bg-white blocks_interval">
+    <h2>О проекте</h2>
+  </div>
+  <div class="container rounded bg-white blocks_interval">
+  <p>Проект Organize ur life создан для тех, кто хочет навести порядок в своей жизни.</p>
+      <p>Благодаря этому приложению вы сможете:</p>
+  <ul>
+      <li>Записывать <b>все</b> свои дела</li>
+      <li>Отмечать <b>дедлайны</b>, чтобы не забыть про сдачу важного проекта</li>
+      <li>Ранжировать дела по <b>срочности</b></li>
+      <li>Отслеживать свой прогресс в <b>личном кабинете</b></li>
+      <li>Пользоваться <b>таймером</b>, чтобы не засиживаться подолгу над одним делом</li>
+      <li>Пользоваться <b>календарем</b>, как средством отображения записанных задач</li>
+  </ul>
+      <p>Чтобы вам было комфортнее работать, мы создали <i>приятный</i>, <i>удобный</i>, а главное - <i>понятный</i> интерфейс.
+          Вы точно не запутаетесь в поиске нужной функции!</p>
+  </div>
+  </main>
+<aside class="container write">
+        <table align="center" width="350">
+		<tr>
+		<td colspan="3" align="center"> <h5> По вопросам работы сайта </h5></td>
+		</tr>
+            <tr>
+            <td align="center"><h6>ВКонтакте</h6></td>
+            <td align="center"><h6>Телеграм</h6></td>
+          </tr>
+          <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/alinaavanesyan">@alinaavanesyan</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/alina_avanesyan">@alina_avanesyan</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/dreamerk8">@dreamerk8</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/petal_of_fire">@petal_of_fire</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/abinakukanova">@abinakukanova</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/abinakukanova">@abinakukanova</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/alyonaa13">@alyonaa13</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/s_alyona_a">@s_alyona_a</a></td>
+          </tr>
+        </table>
+      </aside>
+    <footer>
+		<p class="bot" align="right">&copy; Organize ur life, 2021</p>
+	</footer>
+
+</body>
+</html>

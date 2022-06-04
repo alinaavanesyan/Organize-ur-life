@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+
+    {% if title %}
+        <title>Organize ur life - {{ title }}</title>
+    {% else %}
+        <title>Organize ur life</title>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class=flashes>
+    {% for message in messages %}
+      <li class="flashess">{{ message }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar">
+      <a href="/" style="font-size: 20px; "><b>Organize ur life</b></a>
+      <a href="{{ url_for('about') }}">О нас</a>
+      <a href="{{ url_for('calendar') }}">Календарь</a>
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('account') }}">Личный кабинет</a>
+        <a href="{{ url_for('logout') }}">Выйти</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Войти</a>
+        <a href="{{ url_for('register') }}">Регистрация</a>
+      {% endif %}
+      <button id='button_fon' class="button-fon">Поменять тему</button>
+      <script>
+          const button = document.getElementById('button_fon');
+          if (localStorage.getItem('theme') == false){
+            localStorage.setItem('theme', '0')
+          }
+          function changeBackground(){
+            if (localStorage.getItem('theme') == '1'){
+              localStorage.setItem('theme', '0')
+              document.body.style.background = "#fafafa";
+            }
+            else{
+              localStorage.setItem('theme', '1')
+              document.body.style.background = "#200924";        
+            }
+          }
+          if (localStorage.getItem('theme') == '1'){
+            document.body.style.background = "#200924";
+          }
+          else{
+            document.body.style.background = "#fafafa";
+          }
+          button.addEventListener('click', changeBackground);
+      </script>
+    </nav>
+  </header>
+<main>
+  <div class="quotes">
+    <i>{{ line1 }}</i>
+    <p align="right">{{ line }}</p>
+  </div>
+
+  <div class="container rounded bg-white">
+    <div class="row">
+
+      <div class="col-8 p-4 m-4">
+
+        <h2>У Вас есть задачи на сегодня?</h2>
+
+          <form action="{{ url_for('add') }}" method="POST">
+            <div class="row mb-4 mt-4">
+              <div class="col-5"><input type="text" name="todoitem" class="field" placeholder="Что угодно..."></div>
+              <div class="col-4"><input type="submit" value="добавить" class="button"></div>
+            </div>
+
+            <div class="align" id="panel">
+            <div class="row align-items-center">
+
+              <div class="col-sm max-height:100%" style="color: #FFF; text-align: center; font-style: bold;
+                border-radius: 0.25em; background:#000000; "><p>Установите дедлайн и срочность задачи: </p>
+              </div>
+
+
+              <div class="col-sm"><input class="parametr" type="datetime-local" name="deadline"></div>
+
+              <div class="col-sm">
+                <select id="important" class="select-css" name="important">
+                  <option value="Срочно" class="option">Срочно</option>
+                  <option value="Подождёт" class="option">Подождёт</option>
+                  <option value="Если силы останутся" class="option">Если силы останутся</option>
+                </select>
+              </div>
+
+            </div>
+            </div>
+          </form>
+
+        <div class="row mt-4 mb-4">
+          <div class="col">
+
+          <h2 class="status" style="margin-bottom: 20px; margin-top: 20px;">Невыполненные задачи</h2>
+          <select id="important" class="select-css" name="sort" value="Сортировка..." onchange="location.href=this.value">
+            <option class="option" value="{{ url_for('sort_incomplete', type_sort="date") }}">Сортировать по дате создания</option>
+            <option class="option" value="{{ url_for('sort_incomplete', type_sort="importance") }}">Сортировать по важности</option>
+            <option class="option" value="{{ url_for('sort_incomplete', type_sort="deadline") }}">Сортировать по дедлайну</option>
+          </select>
+
+            <table class="todo_table" style="margin-top: 20px;">
+               {% for todo in incomplete %} 
+
+                <tr>
+                  <td>
+                    <button class="check" onclick="window.location.href='{{ url_for('complete', id=todo.id) }}'"></button>
+                  </td>
+
+                  <td>
+                    <div class="punkt" style="margin-bottom: 5px; margin-top: 5px;">
+                        <form action="{{ url_for('update', id=todo.id) }}" method="POST">
+                          <input type ="text" name="todo_{{ todo.id }}" contenteditable="true"  value="{{todo.text}}" class="edit">
+                        </form>
+                    </div>
+                  </td>
+                  <td><button class="delete" onclick="window.location.href='{{ url_for('delete', id=todo.id) }}'"></button></td>
+                </tr>
+
+                <tr>
+                  <td></td>
+                  <td>
+                  {% if todo.deadline !=None %}
+                    {% if todo.deadline < now_date %}
+                      <a style="color: rgb(255, 0, 0);">{{todo.deadline}}</a>
+                    {% else %}
+                      <a style="color: rgb(0, 0, 0);">{{todo.deadline}}</a>
+                    {% endif %}
+                  {% endif %}
+
+                  {% if todo.important=='Срочно' %}
+                    <a style="background: rgb(255, 112, 112)">{{todo.important}}</a>
+                  {% elif todo.important=='Подождёт' %}
+                    <a style="background: #fbff00;">{{todo.important}}</a>
+                  {% elif todo.important=='Если силы останутся' %}
+                    <a style="background: #aeff9a;;">{{todo.important}}</a>
+                  {% endif %}
+                  </td>
+                {% endfor %}
+                </tr>
+
+            </table>
+
+        </div>
+
+          <div class="col">
+          <h2 class="status" style="margin-bottom: 20px; margin-top: 20px;">Выполненные задачи</h2>
+          <select id="important" class="select-css" name="sort" value="Сортировка..." onchange="location.href=this.value">
+            <option class="option" value="{{ url_for('sort_complete', type_sort="date") }}">Сортировать по дате создания</option>
+            <option class="option" value="{{ url_for('sort_complete', type_sort="importance") }}">Сортировать по важности</option>
+            <option class="option" value="{{ url_for('sort_complete', type_sort="deadline") }}">Сортировать по дедлайну</option>
+          </select>
+
+             <table class="todo_table" style="margin-top: 20px;">
+                {% for todo in complete %}
+                <tr>
+                    <td>
+                      <button class="check1" onclick="window.location.href='{{ url_for('incomplete', id=todo.id) }}'"></button>
+                    </td>
+                    <td>
+                      <div class="punkt" style="margin-bottom: 2px; margin-top: 2px;">
+                        <form action="{{ url_for('update', id=todo.id) }}" method="POST">
+                          <input type = "text" name="todo_{{ todo.id }}" contenteditable="true" value="{{todo.text}}" class="edit">
+                        </form>
+                      </div>
+                    </td>
+                    
+                    <td>
+                      <button class="delete" onclick="window.location.href='{{ url_for('delete', id=todo.id) }}'"></button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                    {% if todo.deadline !=None %}
+                      {% if todo.deadline < now_date %}
+                        <a style="color: rgb(255, 0, 0);">{{todo.deadline}}</a>
+                      {% else %}
+                        <a style="color: rgb(0, 0, 0);">{{todo.deadline}}</a>
+                      {% endif %}
+                    {% endif %}
+                    
+                    {% if todo.important=='Срочно' %}
+                      <a style="background: rgb(255, 112, 112)">{{todo.important}}</a>
+                    {% elif todo.important=='Подождет' %}
+                      <a style="background: #fbff00;">{{todo.important}}</a>
+                    {% elif todo.important=='Если силы останутся' %}
+                      <a style="background: #aeff9a;;">{{todo.important}}</a>
+                    {% endif %}
+                    </td>
+                {% endfor %}
+                 </tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="container rounded bg-white mt-4 mb-4">
+    <div class="row mt-4 mb-4 p-4">
+      <h2 style="margin-top: 30px; margin-left: 2%; ">Невыполненные задачи за всё время</h2>
+      <table class="todo_table" style="margin-top: 20px; margin-left: 2%;">
+        {% for todo in incomplete_old %}
+        <tr>
+            <td>
+               <button class="check" onclick="window.location.href='{{ url_for('complete', id=todo.id) }}'" style="margin-right: 1px;"></button>
+            </td>
+            <td>
+              <div class="punkt" style="margin-bottom: 2px; margin-top: 2px;">
+                <form action="{{ url_for('update', id=todo.id) }}" method="POST">
+                    <input type = "text" name="todo_{{ todo.id }}" contenteditable="true" value="{{todo.text}}" class="edit">
+                </form>
+              </div>
+            </td>
+            <td>
+                <button class="delete" onclick="window.location.href='{{ url_for('delete', id=todo.id) }}'"></button>
+            </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            {% if todo.deadline !=None %}
+              {% if todo.deadline < now_date %}
+                <a style="color: rgb(255, 0, 0);">{{todo.deadline}}</a>
+              {% else %}
+                <a style="color: rgb(0, 0, 0);">{{todo.deadline}}</a>
+              {% endif %}
+            {% endif %}
+
+            {% if todo.important=='Срочно' %}
+              <a style="background: rgb(255, 112, 112)">{{todo.important}}</a>
+            {% elif todo.important=='Подождет' %}
+              <a style="background: #fbff00;">{{todo.important}}</a>
+            {% elif todo.important=='Если силы останутся' %}
+              <a style="background: #aeff9a;;">{{todo.important}}</a>
+            {% endif %}
+          </td>
+        {% endfor %}
+      </tr>
+    </table>
+
+  </div>
+</div>
+</div>
+</main>
+
+<aside class="container write">
+        <table align="center" width="350">
+		<tr>
+		<td colspan="3" align="center"> <h5> По вопросам работы сайта </h5></td>
+		</tr>
+            <tr>
+            <td align="center"><h6>ВКонтакте</h6></td>
+            <td align="center"><h6>Телеграм</h6></td>
+          </tr>
+          <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/alinaavanesyan">@alinaavanesyan</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/alina_avanesyan">@alina_avanesyan</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/dreamerk8">@dreamerk8</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/petal_of_fire">@petal_of_fire</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/abinakukanova">@abinakukanova</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/abinakukanova">@abinakukanova</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/alyonaa13">@alyonaa13</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/s_alyona_a">@s_alyona_a</a></td>
+          </tr>
+        </table>
+      </aside>
+    <footer>
+		<p class="bot" align="right">&copy; Organize ur life, 2021</p>
+	</footer>
+</body>
+</html>
