@@ -170,19 +170,43 @@
 
   <header class="site-header">
     <nav class="navbar">
-      <a href="/" style="font-size: 20px; "><b>Organize ur life</b></a>
-      <a href="{{ url_for('about') }}">О нас</a>
-      <a href="{{ url_for('calendar') }}">Календарь</a>
-      {% if current_user.is_authenticated %}
+        <a href="/" style="font-size: 20px; "><b>Organize ur life</b></a>
+        <a href="{{ url_for('about') }}">О нас</a>
+        <a href="{{ url_for('calendar') }}">Календарь</a>
+        {% if current_user.is_authenticated %}
         <a href="{{ url_for('account') }}">Личный кабинет</a>
         <a href="{{ url_for('logout') }}">Выйти</a>
-      {% else %}
+        {% else %}
         <a href="{{ url_for('login') }}">Войти</a>
         <a href="{{ url_for('register') }}">Регистрация</a>
-      {% endif %}
-      </nav>
-  </header>
-
+        {% endif %}
+        <button id='button_fon' class="button-fon">Поменять фон</button>
+        <script>
+            const button = document.getElementById('button_fon');
+            if (localStorage.getItem('theme') == false){
+            localStorage.setItem('theme', '0')
+            }
+            function changeBackground(){
+            if (localStorage.getItem('theme') == '1'){
+            localStorage.setItem('theme', '0')
+            document.body.style.background = "#fafafa";
+            }
+            else{
+            localStorage.setItem('theme', '1')
+            document.body.style.background = "#200924";
+            }
+            }
+            if (localStorage.getItem('theme') == '1'){
+            document.body.style.background = "#200924";
+            }
+            else{
+            document.body.style.background = "#fafafa";
+            }
+            button.addEventListener('click', changeBackground);
+        </script>
+    </nav>
+</header>
+<main>
   <div id="calendar">
     <div class="header_cal">
         <span class="l_button" id="prev"> &#171 </span>
@@ -250,6 +274,36 @@
     <script language="JavaScript">
         init_cal();
     </script>
-
+</main>
+    <aside class="container write">
+        <table align="center" width="350">
+		<tr>
+		<td colspan="3" align="center"> <h5> По вопросам работы сайта </h5></td>
+		</tr>
+            <tr>
+            <td align="center"><h6>ВКонтакте</h6></td>
+            <td align="center"><h6>Телеграм</h6></td>
+          </tr>
+          <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/alinaavanesyan">@alinaavanesyan</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/alina_avanesyan">@alina_avanesyan</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/dreamerk8">@dreamerk8</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/petal_of_fire">@petal_of_fire</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/abinakukanova">@abinakukanova</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/abinakukanova">@abinakukanova</a></td>
+          </tr>
+            <tr>
+            <td align="center"><a class="gradient" href="https://vk.com/alyonaa13">@alyonaa13</a></td>
+            <td align="center"><a class="gradient" href="https://t.me/s_alyona_a">@s_alyona_a</a></td>
+          </tr>
+        </table>
+      </aside>
+    <footer>
+		<p class="bot" align="right">&copy; Organize ur life, 2021</p>
+	</footer>
 </body>
 </html>
